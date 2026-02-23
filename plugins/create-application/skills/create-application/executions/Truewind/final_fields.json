@@ -1,0 +1,16 @@
+{
+  "siId": "Truewind",
+  "webpageUrl": "https://www.truewind.ai",
+  "description": "Truewind is an AI-powered bookkeeping and accounting platform based in San Francisco, designed for startups, small businesses, accounting firms, and internal teams. It automates repetitive accounting tasks such as transaction categorization, data reconciliation, and month-end close preparation, combining AI with human accountant review to produce GAAP-compliant financial documentation.",
+  "hostingType": "saas",
+  "hostingDescription": "Classified as SaaS: browser-based accounting application for end-users, hosted on Framer/cloud infrastructure",
+  "ssoStatus": "",
+  "pricingUrl": "https://www.truewind.ai/solutions/startups/pricing",
+  "pricingType": "Subscription-based with tiered plans (Essential: $300-$650/month, Core: $650-$1250/month, Growth: $1250-$2000/month), yearly billing offers 15-30% discount",
+  "productCategory": "Accounting & Finance Software / Accounting Software",
+  "alias": "",
+  "category": "businessApplication",
+  "collectionStatus": "inReview",
+  "deprecated": "No",
+  "asOfDate": "2026-02-23"
+}

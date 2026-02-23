@@ -1,0 +1,17 @@
+{
+  "name": "Motion",
+  "webpageUrl": "https://www.usemotion.com/",
+  "description": "Motion is an AI-powered productivity application that combines calendar management, task planning, project management, and documentation. It automatically prioritizes tasks, optimizes schedules through time-blocking, and integrates with over 100 tools including Gmail, Slack, Zoom, and Salesforce. The platform includes features for meeting notes, document management, and team collaboration with built-in AI assistance.",
+  "hostingType": "saas",
+  "hostingDescription": "Classified as SaaS: end-user productivity application hosted on Google Cloud Platform (US Central-1 region)",
+  "ssoStatus": "supported",
+  "pricingUrl": "https://www.usemotion.com/pricing",
+  "pricingType": "Per-user subscription pricing: Pro AI at $19/seat/month (annual) or $29/seat/month (monthly), Business AI at $29/seat/month (annual) or $49/seat/month (monthly)",
+  "productCategory": "Project Management Software",
+  "alias": "",
+  "category": "businessApplication",
+  "siId": "Motion",
+  "collectionStatus": "inReview",
+  "deprecated": "No",
+  "asOfDate": "2026-02-23"
+}

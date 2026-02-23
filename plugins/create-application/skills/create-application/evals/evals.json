@@ -1,0 +1,63 @@
+{
+  "skill_name": "application-creator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create an Application for Fly.io",
+      "expected_output": "Application entry created in LeanIX with verified data from parallel research",
+      "files": [],
+      "assertions": [
+        "Read WORKFLOW.md before starting",
+        "Read all 11 guidelines from ../guidelines/ directory",
+        "Execute exactly 13 parallel queries in Step 1 (8 Perplexity + 5 WebFetch)",
+        "All 13 queries executed in a SINGLE message (true parallelism)",
+        "Step 2 verification compares both sources for each field",
+        "Conflicts are resolved using documented resolution rules",
+        "Description is 30-90 words without marketing language",
+        "Hosting type determined using decision tree from guidelines",
+        "SSO status researched from 5+ sources including changelog",
+        "category field set to 'businessApplication'",
+        "deprecated field set to 'No' with capital N",
+        "collectionStatus field set to 'inReview'",
+        "asOfDate field set to current date in ISO 8601 format (YYYY-MM-DD)",
+        "Quality check validates all criteria before Step 4",
+        "Application created or updated in LeanIX via MCP",
+        "Custom fields updated via Python CLI (create-provider/main.py)",
+        "Final report shows confidence scores and conflict resolutions",
+        "Execution completes without delegating to subagent"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Create an Application for Vercel",
+      "expected_output": "Application entry for Vercel (PaaS platform) created with verified hosting type and SSO status",
+      "files": [],
+      "assertions": [
+        "Workflow steps executed in correct order (1→2→3→4)",
+        "Parallel research completed in Step 1",
+        "Hosting type correctly identified as 'paas' (platform for developers)",
+        "Description factual and 30-90 words",
+        "SSO status researched from official sources",
+        "Quality check passed before creating fact sheet",
+        "All fixed fields set correctly (category, collectionStatus, deprecated, asOfDate)",
+        "No subagent delegation occurred"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Create an application for Notion",
+      "expected_output": "Application entry for Notion (SaaS collaboration tool) created with proper category classification",
+      "files": [],
+      "assertions": [
+        "Guidelines read before execution",
+        "Parallel research queries all executed simultaneously",
+        "Hosting type correctly identified as 'saas' (end-user application)",
+        "Product category matches existing categories in reference",
+        "Description does not contain marketing buzzwords",
+        "Verification step resolves any Perplexity vs WebFetch conflicts",
+        "Quality validation confirms confidence > 70%",
+        "LeanIX fact sheet created successfully"
+      ]
+    }
+  ]
+}

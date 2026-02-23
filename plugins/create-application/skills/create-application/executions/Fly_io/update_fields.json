@@ -1,0 +1,16 @@
+{
+  "siId": "Flyio",
+  "webpageUrl": "https://fly.io",
+  "description": "Fly.io is a Platform as a Service (PaaS) that enables developers to deploy and run applications globally as hardware-virtualized containers called Fly Machines. Applications are deployed across 30+ data centers worldwide using Docker containers, with sub-second launch times and scale-to-zero capabilities. The platform provides compute, storage, and networking infrastructure with CLI-based deployment, private networking via WireGuard, and built-in TLS termination.",
+  "hostingType": "paas",
+  "hostingDescription": "Classified as PaaS: platform for developers to deploy applications globally on Fly.io's proprietary hardware across 30+ regions",
+  "ssoStatus": "supported",
+  "pricingUrl": "https://fly.io/pricing",
+  "pricingType": "Usage-based pricing (pay-as-you-go for VMs, storage, bandwidth) with optional support plans starting at $29/month",
+  "productCategory": "Development / DevOps",
+  "alias": "",
+  "category": "businessApplication",
+  "collectionStatus": "inReview",
+  "deprecated": "No",
+  "asOfDate": "2026-02-23"
+}

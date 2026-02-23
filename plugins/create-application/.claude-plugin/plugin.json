@@ -1,0 +1,10 @@
+{
+  "name": "create-application",
+  "description": "Automatically research and create LeanIX Application fact sheets with verified data. Use this skill whenever the user mentions creating applications, adding applications, researching applications, or says phrases like 'Create application for X', 'Add Application X', 'Research application X', or provides an application name/URL to add to the catalog.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Vineet Goyal",
+    "email": "vineet.goyal@sap.com"
+  },
+  "keywords": ["leanix", "application", "catalog", "research", "fact-sheet", "data-collection", "automation", "verification"]
+}

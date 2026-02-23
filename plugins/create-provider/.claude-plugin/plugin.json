@@ -1,0 +1,10 @@
+{
+  "name": "create-provider",
+  "description": "Automatically research and create LeanIX Provider fact sheets with verified data. Use this skill whenever the user mentions creating providers, adding providers, researching providers, or says phrases like 'Create Provider for X', 'Add Provider X', 'Research provider X', or provides a provider name/URL to add to the catalog.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Vineet Goyal",
+    "email": "vineet.goyal@sap.com"
+  },
+  "keywords": ["leanix", "provider", "vendor", "catalog", "research", "fact-sheet", "data-collection", "automation", "verification"]
+}

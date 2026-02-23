@@ -1,0 +1,55 @@
+{
+  "name": "leanix-catalog-research-marketplace",
+  "owner": {
+    "name": "Vineet Goyal",
+    "email": "vineet.goyal@sap.com"
+  },
+  "metadata": {
+    "description": "Claude Code plugins for LeanIX catalog research and data collection - automate provider and application fact sheet creation with verified data",
+    "version": "1.0.0",
+    "pluginRoot": "./plugins"
+  },
+  "plugins": [
+    {
+      "name": "create-application",
+      "source": "./plugins/create-application",
+      "description": "Automatically research and create LeanIX Application fact sheets with verified data. Use this skill whenever the user mentions creating applications, adding applications, researching applications, or says phrases like 'Create application for X', 'Add Application X', 'Research application X', or provides an application name/URL to add to the catalog.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Vineet Goyal",
+        "email": "vineet.goyal@sap.com"
+      },
+      "keywords": [
+        "leanix",
+        "application",
+        "catalog",
+        "research",
+        "fact-sheet",
+        "data-collection",
+        "automation",
+        "verification"
+      ]
+    },
+    {
+      "name": "create-provider",
+      "source": "./plugins/create-provider",
+      "description": "Automatically research and create LeanIX Provider fact sheets with verified data. Use this skill whenever the user mentions creating providers, adding providers, researching providers, or says phrases like 'Create Provider for X', 'Add Provider X', 'Research provider X', or provides a provider name/URL to add to the catalog.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Vineet Goyal",
+        "email": "vineet.goyal@sap.com"
+      },
+      "keywords": [
+        "leanix",
+        "provider",
+        "vendor",
+        "catalog",
+        "research",
+        "fact-sheet",
+        "data-collection",
+        "automation",
+        "verification"
+      ]
+    }
+  ]
+}
