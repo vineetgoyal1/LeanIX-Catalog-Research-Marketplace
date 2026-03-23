@@ -26,6 +26,7 @@ Trigger this skill when the user says:
 - "Create an application for [name]"
 - "Add [application name] to the catalog"
 - "Create an application entry for [website URL]"
+- "Can you catalog [application] in LeanIX?"
 
 **Do NOT trigger** for:
 - General questions about applications
@@ -43,8 +44,31 @@ Step 2: Agent Verification (YOU compare sources and resolve conflicts)
    ↓
 Step 3: Quality Check (YOU validate against criteria)
    ↓
-Step 4: Create & Update (YOU call LeanIX MCP and Python CLI)
+Step 4: Create & Update (YOU run the GraphQL script)
 ```
+
+---
+
+## Multi-App Parallelism
+
+When the user provides **more than one application** in a single request (e.g. "Create applications for Slack, Notion, and Figma"), **DO NOT process them sequentially**. Instead:
+
+1. **Immediately spawn one subagent per application** using the Task tool — all in the same message:
+
+```
+For each app in [App1, App2, App3]:
+  Task(
+    subagent_type="general-purpose",
+    description="Create LeanIX application for {App}",
+    prompt="Read the SKILL.md at /Users/I756819/.claude/plugins/cache/leanix-catalog-research-marketplace/create-application/1.0.0/skills/create-application/skill/SKILL.md and execute the full 4-step workflow to create a LeanIX Application fact sheet for: {App}"
+  )
+```
+
+2. **All subagents run in parallel** — N apps take the same time as 1 app.
+3. **Collect results** from each subagent and report a combined summary.
+
+**Single app**: Execute the 4-step workflow yourself (YOU ARE THE EXECUTOR).
+**Multiple apps**: Spawn parallel subagents, one per app, all in one message.
 
 ---
 
@@ -52,32 +76,16 @@ Step 4: Create & Update (YOU call LeanIX MCP and Python CLI)
 
 Before starting, YOU must:
 
-1. **Read the complete workflow**:
-   ```
-   Read WORKFLOW.md
-   ```
+1. **Verify tools are available**:
+   - `mcp__perplexity-aicore__perplexity_search` — Perplexity search
+   - `WebFetch` — fetch web pages
+   - `LEANIX_API_TOKEN` and `LEANIX_SUBDOMAIN` set in environment (check with `echo $LEANIX_API_TOKEN`)
 
-2. **Read all 11 guidelines** (these are in the parent directory):
-   ```
-   Read guidelines/Application_Description_Guidelines.md
-   Read guidelines/Application_Webpage_URL_Guidelines.md
-   Read guidelines/Application_Hosting_Type_Guidelines.md
-   Read guidelines/Application_SSO_Status_Guidelines.md
-   Read guidelines/Application_Pricing_Guidelines.md
-   Read guidelines/Application_Product_Category_Guidelines.md
-   Read guidelines/Application_Alias_Guidelines.md
-   Read guidelines/Application_Subtype_Guidelines.md
-   Read guidelines/Application_SI_ID_Implementation.md
-   Read guidelines/Application_As_Of_Date_Guidelines.md
-   Read guidelines/Application_Collection_Status_and_Deprecated_Guidelines.md
-   ```
+2. **Check if multiple apps requested** — if YES, see [Multi-App Parallelism](#multi-app-parallelism) below and spawn one subagent per app before doing anything else.
 
-3. **Verify tools are available**:
-   - Check for `mcp__perplexity__perplexity_search` (load with ToolSearch if needed)
-   - Check for `WebFetch` tool
-   - Check for `mcp__LeanIX_MCP_Server_Remote__` tools (load with ToolSearch if needed)
+3. **Apply inline field rules** (no guideline file reads needed — rules are embedded below in each step).
 
-**Self-Reflection**: If you're about to skip reading the guidelines or make ad-hoc queries, STOP and ask yourself: "Why am I not following the documented workflow?"
+**Self-Reflection**: If you're about to read guideline files or make queries sequentially, STOP — rules are inlined and research must be parallel.
 
 ---
 
@@ -85,55 +93,18 @@ Before starting, YOU must:
 
 **YOU must execute ALL 13 queries in a SINGLE message** - this is critical for parallelism.
 
-### How to Use the Python Research Modules
-
-The Python modules in `lib/` are **query templates** that show you exactly what to ask. **Read them first** to understand the correct query structure, then make parallel API calls.
-
-**Step 1a: Read the Query Templates**
-
-Before making ANY queries, read these files to see the exact query format:
-- Read `lib/application_researcher.py` - Shows the 8 Perplexity query methods
-- Read `lib/parallel_researcher.py` - Shows WebFetch extraction prompts
-
-**Step 1b: Execute Parallel Research (Use the Templates)**
-
-Now make **13 simultaneous tool calls** using the query formats from the modules.
-
-**Example Pattern:**
-```
-# Read the template first
-Read lib/application_researcher.py
-
-# Then make the call using that query format
-mcp__perplexity__perplexity_search(
-    query="<exact query from get_url_research_query() method>"
-)
-```
-
-**DO NOT improvise queries. DO NOT skip reading the modules. The templates ensure consistency with the guidelines.**
-
 ### Perplexity Queries (8 total)
 
 ```python
 # Execute all 8 simultaneously in one message
-# Use query formats from lib/application_researcher.py methods:
-# - get_url_research_query()
-# - get_hosting_type_research_query()
-# - get_sso_status_research_query()
-# - get_pricing_research_query()
-# - get_product_category_research_query()
-# - get_aliases_research_query()
-# - get_subtype_research_query()
-# - get_description_research_query()
-
-mcp__perplexity__perplexity_search(query="<use get_url_research_query() format>")
-mcp__perplexity__perplexity_search(query="<use get_hosting_type_research_query() format>")
-mcp__perplexity__perplexity_search(query="<use get_sso_status_research_query() format>")
-mcp__perplexity__perplexity_search(query="<use get_pricing_research_query() format>")
-mcp__perplexity__perplexity_search(query="<use get_product_category_research_query() format>")
-mcp__perplexity__perplexity_search(query="<use get_aliases_research_query() format>")
-mcp__perplexity__perplexity_search(query="<use get_subtype_research_query() format>")
-mcp__perplexity__perplexity_search(query="<use get_description_research_query() format>")
+mcp__perplexity-aicore__perplexity_search(query="[App Name] official website URL - find from authoritative sources", model="sonar")
+mcp__perplexity-aicore__perplexity_search(query="[App Name] hosting type: Is it SaaS, PaaS, or IaaS? Is it for developers, end-users, or IT teams? What cloud provider?", model="sonar")
+mcp__perplexity-aicore__perplexity_search(query="Does [App Name] support SSO (Single Sign-On)? Check for SAML, OAuth, Azure AD, Okta integration", model="sonar")
+mcp__perplexity-aicore__perplexity_search(query="[App Name] pricing model and costs - free tier, subscription, usage-based, or enterprise pricing?", model="sonar")
+mcp__perplexity-aicore__perplexity_search(query="What product category is [App Name]? Is it cloud platform, developer tool, CRM, project management, etc.?", model="sonar")
+mcp__perplexity-aicore__perplexity_search(query="[App Name] aliases, former names, abbreviations, or alternate names", model="sonar")
+mcp__perplexity-aicore__perplexity_search(query="Is [App Name] a web application or mobile app? Browser-based or native?", model="sonar")
+mcp__perplexity-aicore__perplexity_search(query="[App Name] description - what does it do? Core capabilities? Factual description without marketing", model="sonar")
 ```
 
 ### WebFetch Queries (5 total)
@@ -251,58 +222,118 @@ Action: Fix issues before proceeding
 
 ## Step 4: Create & Update
 
-### 4.1: Create Application
+Everything is done with a **single GraphQL script** — no LeanIX MCP calls needed.
+The script: creates the fact sheet, then immediately patches all fields (including description) in one operation.
 
-```python
-result = mcp__LeanIX_MCP_Server_Remote__create_fact_sheet(
-    name="[Application Name]",
-    type="Application"
-)
-fact_sheet_id = result["id"]
-```
+**Required Environment** (already set in `~/.zshrc`):
+- `LEANIX_API_TOKEN` — starts with `LXT_`
+- `LEANIX_SUBDOMAIN` — e.g. `demo-eu-10`
 
-### 4.2: Update Custom Fields via Python CLI
+**Fill in all `{placeholder}` values** from Step 2 verified data before running.
+Leave any unknown optional fields as empty string `""` — they are filtered out automatically.
 
-**Required Environment**:
-- `LEANIX_API_TOKEN` - Get from user if not set
-- `LEANIX_SUBDOMAIN` - Usually "demo-eu-10"
-
-**Method 1: Direct JSON**
 ```bash
-export LEANIX_API_TOKEN='LXT_...' && \
-export LEANIX_SUBDOMAIN='demo-eu-10' && \
-cd ../create-provider && \
-python main.py update \
-    --fact-sheet-id "{fact_sheet_id}" \
-    --type Application \
-    --fields '{...json...}'
+python3 << 'PYEOF'
+import urllib.request, urllib.parse, json, ssl, base64, os
+
+API_TOKEN = os.environ['LEANIX_API_TOKEN']
+SUBDOMAIN = os.environ['LEANIX_SUBDOMAIN']
+
+# ── 1. Authenticate ──────────────────────────────────────────────────────────
+ctx = ssl.create_default_context()
+auth_data = urllib.parse.urlencode({'grant_type': 'client_credentials'}).encode()
+credentials = base64.b64encode(f'apitoken:{API_TOKEN}'.encode()).decode()
+with urllib.request.urlopen(urllib.request.Request(
+    f'https://{SUBDOMAIN}.leanix.net/services/mtm/v1/oauth2/token',
+    data=auth_data,
+    headers={'Authorization': f'Basic {credentials}', 'Content-Type': 'application/x-www-form-urlencoded'}
+), context=ctx) as r:
+    bearer = json.loads(r.read())['access_token']
+
+def gql(query, variables=None):
+    payload = json.dumps({'query': query, 'variables': variables or {}}).encode()
+    with urllib.request.urlopen(urllib.request.Request(
+        f'https://{SUBDOMAIN}.leanix.net/services/pathfinder/v1/graphql',
+        data=payload,
+        headers={'Authorization': f'Bearer {bearer}', 'Content-Type': 'application/json'}
+    ), context=ctx) as r:
+        return json.loads(r.read())
+
+# ── 2. Create fact sheet ─────────────────────────────────────────────────────
+APP_NAME = "{appName}"
+
+create_result = gql('''
+mutation createFS($input: BaseFactSheetInput!, $patches: [Patch]) {
+  createFactSheet(input: $input, patches: $patches) {
+    factSheet { id name }
+  }
+}''', {
+    'input': {'name': APP_NAME, 'type': 'Application'},
+    'patches': []
+})
+
+if 'errors' in create_result:
+    # Fact sheet may already exist — look it up
+    print(f"Create error (may already exist): {create_result['errors'][0]['message']}")
+    search_result = gql('''
+    { allFactSheets(filter: {facetFilters: [{facetKey: "FactSheetTypes", keys: ["Application"]}], fullTextSearch: "%s"}) {
+        edges { node { id name } }
+    }}''' % APP_NAME)
+    matches = [e['node'] for e in search_result['data']['allFactSheets']['edges']
+               if e['node']['name'].lower() == APP_NAME.lower()]
+    if not matches:
+        print("ERROR: Could not find or create fact sheet. Aborting.")
+        exit(1)
+    fact_sheet_id = matches[0]['id']
+    print(f"Found existing fact sheet: {fact_sheet_id}")
+else:
+    fact_sheet_id = create_result['data']['createFactSheet']['factSheet']['id']
+    print(f"✓ Created fact sheet: {APP_NAME} ({fact_sheet_id})")
+
+# ── 3. Build patches (all fields in one mutation) ────────────────────────────
+fields = {
+    '/description':       "{description}",
+    '/webpageUrl':        "{webpageUrl}",
+    '/hostingType':       "{hostingType}",
+    '/hostingDescription':"{hostingDescription}",
+    '/ssoStatus':         "{ssoStatus}",
+    '/pricingUrl':        "{pricingUrl}",
+    '/pricingType':       "{pricingType}",
+    '/productCategory':   "{productCategory}",
+    '/collectionStatus':  "inReview",
+    '/deprecated':        "No",
+    '/asOfDate':          "{asOfDate}",
+}
+patches = [{'op': 'replace', 'path': k, 'value': v} for k, v in fields.items() if v]
+
+# ── 4. Apply all patches in one call ─────────────────────────────────────────
+update_result = gql('''
+mutation updateFS($id: ID!, $patches: [Patch]!) {
+  updateFactSheet(id: $id, patches: $patches, validateOnly: false) {
+    factSheet { id name
+      ... on Application {
+        description webpageUrl hostingType pricingType
+        productCategory collectionStatus asOfDate
+      }
+    }
+  }
+}''', {'id': fact_sheet_id, 'patches': patches})
+
+if 'errors' in update_result:
+    print('UPDATE ERRORS:', json.dumps(update_result['errors'], indent=2))
+else:
+    fs = update_result['data']['updateFactSheet']['factSheet']
+    print(f"✓ All fields updated: {fs['name']} ({fs['id']})")
+    print(f"  hostingType    : {fs.get('hostingType')}")
+    print(f"  pricingType    : {fs.get('pricingType')}")
+    print(f"  productCategory: {fs.get('productCategory')}")
+    print(f"  collectionStatus: {fs.get('collectionStatus')}")
+    print(f"  asOfDate       : {fs.get('asOfDate')}")
+    print(f"  LeanIX URL     : https://{SUBDOMAIN}.leanix.net/factsheet/Application/{fs['id']}")
+PYEOF
 ```
 
-**Method 2: From File (Recommended)**
-```bash
-# 1. Write fields to JSON file
-Write: ../create-application/executions/[App_Name]/final_fields.json
-
-# 2. Execute update
-export LEANIX_API_TOKEN='LXT_...' && \
-export LEANIX_SUBDOMAIN='demo-eu-10' && \
-cd ../create-provider && \
-python main.py update \
-    --fact-sheet-id "{fact_sheet_id}" \
-    --type Application \
-    --fields "$(cat ../create-application/executions/[App_Name]/final_fields.json)"
-```
-
-### 4.3: Update Description via MCP
-
-```python
-mcp__LeanIX_MCP_Server_Remote__update_fact_sheet(
-    id=fact_sheet_id,
-    description="[verified description]"
-)
-```
-
-### 4.4: Report Success
+### 4.2: Report Success
 
 ```
 ✅ Application Created Successfully!
@@ -383,8 +414,11 @@ Rationale: Better blank than guessing
 ```
 Error: LEANIX_API_TOKEN not set
 
-Action: Ask user for token
-Prompt: "I need your LeanIX API token to create the application. It starts with 'LXT_'."
+Action: Source ~/.zshrc first:
+  source ~/.zshrc
+  python3 << 'PYEOF' ...
+
+If still missing, ask user for token (starts with 'LXT_').
 ```
 
 ---
@@ -422,7 +456,7 @@ Prompt: "I need your LeanIX API token to create the application. It starts with 
 
 ### Product Category
 
-**Reference**: guidelines/Application_Product_Category_Guidelines.md (top 50 categories listed)
+**Reference**: ../guidelines/Application_Product_Category_Guidelines.md (top 50 categories listed)
 
 **Strategy**:
 1. Extract functionality from description
